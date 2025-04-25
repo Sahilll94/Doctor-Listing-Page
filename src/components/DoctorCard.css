@@ -1,0 +1,44 @@
+.doctor-card {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    background-color: #fff;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+  }
+  
+  .doctor-photo {
+    width: 120px;
+    height: 120px;
+    border-radius: 8px;
+    object-fit: cover;
+  }
+  
+  .doctor-info {
+    flex: 1;
+  }
+  
+  .consult-tags {
+    margin-top: 0.5rem;
+  }
+  
+  .tag {
+    display: inline-block;
+    margin-right: 0.5rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: white;
+  }
+  
+  .in-clinic {
+    background-color: green;
+  }
+  
+  .video {
+    background-color: dodgerblue;
+  }
+  
