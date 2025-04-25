@@ -16,7 +16,6 @@ function DoctorListingPage() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Function to filter doctors based on current filters
   const filterDoctorsList = () => {
     let filtered = [...doctors];
 
@@ -53,18 +52,17 @@ function DoctorListingPage() {
       }
     }
 
-    console.log('Filtered Doctors:', filtered); // Log the filtered list for debugging
+    console.log('Filtered Doctors:', filtered); 
     setFilteredDoctors(filtered);
   };
 
-  // Fetch doctors data from API
   useEffect(() => {
     const apiUrl = process.env.REACT_APP_DOCTORS_API_URL;
     axios
       .get(apiUrl)
       .then((res) => {
         setDoctors(res.data);
-        setFilteredDoctors(res.data);  // Set initial doctor list
+        setFilteredDoctors(res.data);  
         setLoading(false);
       })
       .catch((err) => {
@@ -73,7 +71,6 @@ function DoctorListingPage() {
       });
   }, []);
 
-  // Set initial filter state from URL query params
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const search = queryParams.get('search') || '';
@@ -87,7 +84,6 @@ function DoctorListingPage() {
     setSortOption(sort);
   }, [location.search]);
 
-  // Trigger filter function when any filter state changes
   useEffect(() => {
     filterDoctorsList();
   }, [searchText, selectedSpecialities, selectedConsultationType, sortOption, doctors]);
@@ -106,32 +102,27 @@ function DoctorListingPage() {
     { label: 'experience', value: 'experience_high_low' },
   ];
 
-  // Handle search text change
   const handleSearchChange = (inputValue) => {
     setSearchText(inputValue);
     updateURL('search', inputValue);
   };
 
-  // Handle speciality filter change
   const handleSpecialitiesChange = (selected) => {
     const validSelections = selected ? selected.filter((item) => item && item.value) : [];
     setSelectedSpecialities(validSelections);
     updateURL('specialities', JSON.stringify(validSelections.map((s) => s.value)));
   };
 
-  // Handle consultation type filter change
   const handleConsultationChange = (selectedOption) => {
     setSelectedConsultationType(selectedOption);
     updateURL('consultation', selectedOption ? selectedOption.value : '');
   };
 
-  // Handle sort option change
   const handleSortChange = (option) => {
     setSortOption(option ? option.value : '');
     updateURL('sort', option ? option.value : '');
   };
 
-  // Update URL with query parameter
   const updateURL = (param, value) => {
     const queryParams = new URLSearchParams(location.search);
     queryParams.set(param, value);
@@ -155,7 +146,6 @@ function DoctorListingPage() {
     <div style={{ padding: '2rem' }} data-testid="doctor-listing-page">
       <h1>Doctor Listing</h1>
 
-      {/* Filters */}
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>
         <Select
           placeholder="Search by name..."
@@ -173,7 +163,7 @@ function DoctorListingPage() {
           options={filterDoctors(searchText)}
           isClearable
           data-testid="autocomplete-input"
-          style={{ width: '300px' }}  // Increased width
+          style={{ width: '300px' }} 
         />
 
         <Select
@@ -183,7 +173,7 @@ function DoctorListingPage() {
           onChange={handleConsultationChange}
           isClearable
           data-testid="filter-consultation-type"
-          style={{ width: '300px' }}  // Increased width
+          style={{ width: '300px' }} 
         />
 
         <Select
@@ -194,7 +184,7 @@ function DoctorListingPage() {
           isMulti
           isClearable
           data-testid="filter-specialties"
-          style={{ width: '300px' }}  // Increased width
+          style={{ width: '300px' }}  
         />
 
         <Select
@@ -204,11 +194,10 @@ function DoctorListingPage() {
           onChange={handleSortChange}
           isClearable
           data-testid="filter-sort"
-          style={{ width: '300px' }}  // Increased width
+          style={{ width: '300px' }}  
         />
       </div>
 
-      {/* Doctor Cards */}
       {filteredDoctors.length === 0 ? (
         <p data-testid="no-doctors-found">No doctors found.</p>
       ) : (
