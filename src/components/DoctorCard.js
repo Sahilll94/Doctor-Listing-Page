@@ -1,108 +1,172 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 
-function DoctorCard({ doctor }) {
+// Simple Loading Spinner component
+function LoadingSpinner() {
+  return (
+    <div style={{ textAlign: 'center', padding: '2rem' }}>
+      <div className="spinner" style={{ border: '4px solid #f3f3f3', borderTop: '4px solid #007BFF', borderRadius: '50%', width: '40px', height: '40px', animation: 'spin 2s linear infinite' }} />
+    </div>
+  );
+}
+
+function DoctorCard({ doctor, onSpecialityClick }) {
+  const [loading, setLoading] = useState(true);
+
+  // Simulate loading
+  useEffect(() => {
+    if (doctor) {
+      setLoading(false);
+    }
+  }, [doctor]);
+
+  // If loading is true, show spinner
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+
+  const {
+    name,
+    photo,
+    specialities,
+    experience,
+    fees,
+    languages,
+    clinic,
+    video_consult,
+    in_clinic,
+  } = doctor;
+
+  const consultModes = [
+    video_consult ? 'Video Consult' : null,
+    in_clinic ? 'In Clinic' : null,
+  ]
+    .filter(Boolean)
+    .join(', ');
+
   return (
     <div
-      data-testid="doctor-card"
       style={{
-        border: '1px solid #ddd',
-        borderRadius: '15px',
-        padding: '1.5rem',
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+        width: '100%',
+        maxWidth: '320px',
+        border: '1px solid #e0e0e0',
+        borderRadius: '20px',
         backgroundColor: '#fff',
-        marginBottom: '1.5rem',
-        transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-        cursor: 'pointer',
+        boxShadow: '0 6px 20px rgba(0, 0, 0, 0.06)',
+        padding: '1.5rem',
+        transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
       }}
-      onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
-      onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+      onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.02)')}
+      onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+      data-testid="doctor-card"
     >
-      <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+      <div style={{ display: 'flex', gap: '1.2rem', alignItems: 'center' }}>
         <img
-          src={doctor.photo}
-          alt={doctor.name}
+          src={photo}
+          alt={name}
           style={{
-            width: 100,
-            height: 100,
+            width: 80,
+            height: 80,
             borderRadius: '50%',
             objectFit: 'cover',
-            border: '3px solid #ddd',
-            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+            border: '3px solid #eee',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
           }}
+          data-testid="doctor-photo"
         />
         <div>
           <h3
+            style={{ margin: 0, fontSize: '1.1rem', fontWeight: '600', color: '#333' }}
             data-testid="doctor-name"
-            style={{
-              margin: 0,
-              fontSize: '1.2rem',
-              fontWeight: '600',
-              color: '#333',
-              letterSpacing: '0.5px',
-            }}
           >
-            {doctor.name}
+            {name}
           </h3>
           <p
-            data-testid="doctor-specialty"
-            style={{
-              margin: '0.25rem 0',
-              fontSize: '0.95rem',
-              color: '#666',
-              fontStyle: 'italic',
-            }}
+            style={{ margin: '0.3rem 0', fontSize: '0.9rem', color: '#007BFF' }}
+            data-testid="doctor-specialities"
           >
-            {doctor.specialities.map(s => s.name).join(', ')}
-          </p>
-          <p
-            data-testid="doctor-experience"
-            style={{
-              margin: '0.25rem 0',
-              fontSize: '1rem',
-              color: '#555',
-              fontWeight: '500',
-            }}
-          >
-            {doctor.experience}
-          </p>
-          <p
-            data-testid="doctor-fee"
-            style={{
-              margin: '0.25rem 0',
-              fontSize: '1rem',
-              color: '#3D8D47',
-              fontWeight: '600',
-            }}
-          >
-            Fee: <span style={{ color: '#f39c12' }}>{doctor.fees}</span>
+            {specialities.map((s, i) => (
+              <span
+                key={i}
+                onClick={() => onSpecialityClick && onSpecialityClick(s.name)}
+                style={{ cursor: 'pointer', marginRight: '6px', textDecoration: 'underline' }}
+                data-testid={`speciality-${i}`}
+              >
+                {s.name}
+              </span>
+            ))}
           </p>
         </div>
       </div>
 
-      <p
-        style={{
-          marginTop: '1rem',
-          fontSize: '0.95rem',
-          color: '#444',
-          lineHeight: '1.4',
-          fontStyle: 'italic',
-        }}
-      >
-        {doctor.doctor_introduction || 'No introduction available.'}
-      </p>
+      <div style={{ marginTop: '1rem' }}>
+        <p style={{ fontSize: '0.9rem', color: '#333', margin: '4px 0' }} data-testid="consult-modes">
+          <strong>Mode:</strong> {consultModes || 'N/A'}
+        </p>
+        <p style={{ fontSize: '0.9rem', color: '#333', margin: '4px 0' }} data-testid="doctor-experience">
+          <strong>Experience:</strong> {experience}
+        </p>
+        <p style={{ fontSize: '0.9rem', color: '#333', margin: '4px 0' }} data-testid="doctor-fees">
+          <strong>Fee:</strong> <span style={{ color: '#f39c12' }}>{fees}</span>
+        </p>
+        <p style={{ fontSize: '0.9rem', color: '#333', margin: '4px 0' }} data-testid="doctor-languages">
+          <strong>Languages:</strong> {languages.join(', ')}
+        </p>
+        <p style={{ fontSize: '0.85rem', color: '#555', marginTop: '8px' }} data-testid="doctor-clinic">
+          🏥 {clinic?.name} – {clinic?.address?.locality}, {clinic?.address?.city}
+        </p>
+      </div>
 
-      <p
+      <button
         style={{
-          fontSize: '0.85rem',
-          color: '#666',
           marginTop: '1rem',
-          fontStyle: 'italic',
+          padding: '0.6rem 1rem',
+          backgroundColor: '#007BFF',
+          color: '#fff',
+          border: 'none',
+          borderRadius: '10px',
+          cursor: 'pointer',
+          fontWeight: '600',
+          fontSize: '0.95rem',
+          alignSelf: 'flex-start',
         }}
+        onClick={() => alert(`Book appointment with ${name}`)}
+        data-testid="book-appointment-button"
       >
-        🏥 {doctor.clinic?.name} – {doctor.clinic?.address?.locality}, {doctor.clinic?.address?.city}
-      </p>
+        Book Appointment
+      </button>
     </div>
   );
 }
+
+DoctorCard.propTypes = {
+  doctor: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    photo: PropTypes.string.isRequired,
+    specialities: PropTypes.arrayOf(
+      PropTypes.shape({ name: PropTypes.string.isRequired })
+    ).isRequired,
+    experience: PropTypes.string.isRequired,
+    fees: PropTypes.string.isRequired,
+    languages: PropTypes.arrayOf(PropTypes.string).isRequired,
+    clinic: PropTypes.shape({
+      name: PropTypes.string,
+      address: PropTypes.shape({
+        locality: PropTypes.string,
+        city: PropTypes.string,
+      }),
+    }),
+    video_consult: PropTypes.bool,
+    in_clinic: PropTypes.bool,
+  }).isRequired,
+  onSpecialityClick: PropTypes.func,
+};
+
+DoctorCard.defaultProps = {
+  onSpecialityClick: null,
+};
 
 export default DoctorCard;
